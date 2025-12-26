@@ -1,4 +1,4 @@
-name: Check run
+name: CI
 
 on:
   push:
@@ -16,50 +16,55 @@ env:
 
 jobs:
   build:
-    name: Typecheck & Build (Bun)
+    name: Typecheck & Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Show workspace (debug)
+        run: |
+          echo "Workspace: $GITHUB_WORKSPACE"
+          pwd
+          echo "Top-level files and folders:"
+          ls -la
+
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Restore cache
+      - name: Restore cache (bun & node_modules)
         uses: actions/cache@v4
         with:
           path: |
-            shiggypage/node_modules
-            shiggypage/.bun
             ~/.bun
-          key: ${{ runner.os }}-bun-${{ hashFiles('shiggypage/bun.lock') }}
+            node_modules
+            .bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
-        working-directory: shiggypage
 
       - name: Run typecheck
         run: bun run typecheck
-        working-directory: shiggypage
 
       - name: Build (vite)
         run: bun run build
-        working-directory: shiggypage
 
       - name: Show dist contents
         if: always()
         run: |
-          echo "Dist listing for debugging:"
-          ls -la shiggypage/dist || true
+          echo "dist contents:"
+          ls -la dist || true
 
-      - name: Upload build artifact
+      - name: Upload build artifact (dist from repo root)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: shiggypage-dist
-          path: shiggypage/dist
+          name: site-dist
+          path: dist
