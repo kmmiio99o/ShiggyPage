@@ -4,7 +4,9 @@
     "logoUrl": "https://cdn.kmmiio99o.dev/shiggycord/c1hl8n.webp",
     "description": "A high-performance bundle based on Kettu. Made for fun and the community.",
     "copyRight": "ShiggyCord. All rights reserved.",
-    "affiliation": "ShiggyCord is not affiliated with Discord Inc."
+    "affiliation": "ShiggyCord is not affiliated with Discord Inc.",
+    "github_button_text": "GitHub",
+    "github_tooltip_text": "View GitHub"
   },
   "links": {
     "github_page": "https://github.com/kmmiio99o/ShiggyPage",

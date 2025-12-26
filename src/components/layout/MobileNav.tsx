@@ -123,7 +123,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             fontWeight: 700,
           }}
         >
-          View GitHub
+          {content.brand.github_tooltip_text}
         </Button>
       </Box>
     </Drawer>

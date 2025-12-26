@@ -87,7 +87,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ activePath }) => {
         }}
       />
 
-      <Tooltip title="View Source on GitHub" arrow>
+      <Tooltip title={content.brand.github_button_text} arrow>
         <Button
           component="a"
           href={content.links.github_project}
@@ -112,7 +112,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ activePath }) => {
             },
           }}
         >
-          GitHub
+          {content.brand.github_button_text}
         </Button>
       </Tooltip>
     </Box>
