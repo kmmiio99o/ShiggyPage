@@ -1,0 +1,154 @@
+import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Container,
+  Box,
+  useTheme,
+  alpha,
+  IconButton,
+  useMediaQuery,
+} from "@mui/material";
+import { useLocation } from "react-router-dom";
+import { DesktopNav } from "./DesktopNav";
+import { MobileNav } from "./MobileNav";
+import content from "../../json/layout.json";
+
+export const Header: React.FC = () => {
+  const location = useLocation();
+  const activePath = location.pathname;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const toggleMobileNav = () => setMobileOpen((prev) => !prev);
+
+  return (
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          backgroundColor: "transparent",
+          backgroundImage: "none",
+          top: isMobile ? 0 : 16,
+          zIndex: theme.zIndex.drawer + 2,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar
+            sx={{
+              minHeight: 64,
+              px: { xs: 2, sm: 3 },
+              backgroundColor: alpha(theme.palette.background.paper, 0.8),
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              borderRadius: isMobile ? "0 0 24px 24px" : "24px",
+              border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+              boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.05)}`,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                }}
+              >
+                <Box
+                  component="img"
+                  src={content.brand.logoUrl}
+                  alt={`${content.brand.name} Logo`}
+                  sx={{
+                    width: "85%",
+                    height: "85%",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+
+              <Box
+                component="span"
+                sx={{
+                  fontWeight: 800,
+                  fontSize: "1.1rem",
+                  color: theme.palette.text.primary,
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                {content.brand.name}
+              </Box>
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            {!isMobile && <DesktopNav activePath={activePath} />}
+
+            {isMobile && (
+              <IconButton
+                onClick={toggleMobileNav}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  color: theme.palette.text.primary,
+                  bgcolor: alpha(theme.palette.primary.main, 0.05),
+                  position: "relative",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 20,
+                    height: 14,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    "& span": {
+                      display: "block",
+                      width: "100%",
+                      height: "2px",
+                      bgcolor: "currentColor",
+                      borderRadius: "2px",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      transformOrigin: "center",
+                    },
+                    ...(mobileOpen && {
+                      "& span:nth-of-type(1)": {
+                        transform: "translateY(6px) rotate(45deg)",
+                      },
+                      "& span:nth-of-type(2)": {
+                        opacity: 0,
+                        transform: "scale(0)",
+                      },
+                      "& span:nth-of-type(3)": {
+                        transform: "translateY(-6px) rotate(-45deg)",
+                      },
+                    }),
+                  }}
+                >
+                  <span />
+                  <span />
+                  <span />
+                </Box>
+              </IconButton>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {isMobile && (
+        <MobileNav
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          activePath={activePath}
+        />
+      )}
+    </>
+  );
+};

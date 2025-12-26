@@ -1,0 +1,45 @@
+{
+  "prerequisites": [
+    {
+      "title": "Bun Runtime",
+      "sub": "Required for high-performance execution",
+      "icon": "Terminal",
+      "important": true
+    },
+    {
+      "title": "Git",
+      "sub": "Required to pull the source code",
+      "icon": "GitHub",
+      "important": true
+    },
+    {
+      "title": "Developer Mode",
+      "sub": "Must be enabled in Discord Advanced settings",
+      "icon": "Settings",
+      "important": true
+    },
+    {
+      "title": "Node.js",
+      "sub": "Optional alternative to Bun",
+      "icon": "InfoOutlined",
+      "important": false
+    }
+  ],
+  "buildSteps": [
+    "git clone https://github.com/kmmiio99o/ShiggyCord.git",
+    "cd ShiggyCord",
+    "bun i",
+    "bun run build"
+  ],
+  "localDevelopment": [
+    {
+      "label": "Spin up server",
+      "desc": "Run 'bun run serve' to host locally."
+    },
+    {
+      "label": "Config Loader",
+      "desc": "Point your loader to http://localhost:4040/shiggycord.js"
+    },
+    { "label": "Debug", "desc": "Use Discord's console to check for errors." }
+  ]
+}

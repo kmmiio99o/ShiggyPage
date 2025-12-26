@@ -1,0 +1,40 @@
+{
+  "brand": {
+    "name": "ShiggyCord",
+    "logoUrl": "https://cdn.kmmiio99o.dev/shiggycord/c1hl8n.webp",
+    "description": "A high-performance bundle based on Kettu. Made for fun and the community.",
+    "copyRight": "ShiggyCord. All rights reserved.",
+    "affiliation": "ShiggyCord is not affiliated with Discord Inc."
+  },
+  "links": {
+    "github_page": "https://github.com/kmmiio99o/ShiggyPage",
+    "github_project": "https://github.com/kmmiio99o/ShiggyCord",
+    "discord": "https://discord.gg/nQykFF9Ud6"
+  },
+  "navigation": [
+    { "text": "Home", "href": "/" },
+    { "text": "Install", "href": "/install" },
+    { "text": "Build", "href": "/build" },
+    { "text": "FAQ", "href": "/faq" },
+    { "text": "Contributors", "href": "/contribute" }
+  ],
+  "footer": {
+    "sections": [
+      {
+        "title": "Project",
+        "links": [
+          { "label": "Installation", "to": "/install" },
+          { "label": "Build Source", "to": "/build" }
+        ]
+      },
+      {
+        "title": "Community",
+        "links": [
+          { "label": "Contribute", "to": "/contribute" },
+          { "label": "Support", "href": "https://discord.gg/nQykFF9Ud6" }
+        ]
+      }
+    ],
+    "madeWith": "React and MUI"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "header": {
+    "title": "Installation"
+  },
+  "tabs": {
+    "non_root": {
+      "label": "Non-Root",
+      "type": "android"
+    },
+    "root": {
+      "label": "Root",
+      "type": "root"
+    },
+    "ios": {
+      "label": "iOS",
+      "type": "ios"
+    },
+    "pc": {
+      "label": "PC",
+      "type": "pc"
+    }
+  },
+  "labels": {
+    "recommended_badge": "REC."
+  }
+}

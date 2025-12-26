@@ -1,0 +1,20 @@
+{
+  "image": {
+    "url": "https://cdn.kmmiio99o.dev/shiggycord/xguhyl.png",
+    "alt": "Shiggy searching"
+  },
+  "content": {
+    "title": "Shiggy is searching the website...",
+    "subtitle": "...but she couldn't find the page you're looking for. It may have been moved, renamed, or never existed."
+  },
+  "actions": {
+    "home": {
+      "label": "Go Home",
+      "path": "/"
+    },
+    "faq": {
+      "label": "Visit the FAQ",
+      "path": "/faq"
+    }
+  }
+}

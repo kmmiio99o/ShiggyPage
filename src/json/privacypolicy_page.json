@@ -1,0 +1,30 @@
+{
+  "header": {
+    "title": "Privacy Policy",
+    "last_updated_prefix": "Last updated: "
+  },
+  "sections": [
+    {
+      "id": "data_stance",
+      "title": "Our Stance on Data",
+      "icon": "Security",
+      "content": "ShiggyCord does not collect, store, or process any personal data. Our project is built with a privacy-first mindset. We have no interest in your personal information, and our infrastructure is designed so that there is no database or server-side storage for user details. Everything is stored locally on your phone, but it's only neccessery info for the bundle."
+    },
+    {
+      "id": "local_storage",
+      "title": "Local Storage Only",
+      "icon": "Storage",
+      "content": "Any configurations, settings, or custom code you use within ShiggyCord are stored locally on your own device. This data never leaves your machine and is never sent to my servers (as I don't have them). You have full control over your data at all times."
+    },
+    {
+      "id": "third_party",
+      "title": "Third-Party Services",
+      "icon": "Lock",
+      "content": "While we do not collect data, ShiggyCord interacts with third-party platforms like GitHub and Discord. When you use these services or visit our repository, their respective privacy policies apply. We recommend reviewing their terms to understand how they handle your information."
+    }
+  ],
+  "footer": {
+    "title": "Questions?",
+    "text": "If you have any concerns about how ShiggyCord handles privacy, please reach out to us on our official Discord or open an issue on GitHub."
+  }
+}

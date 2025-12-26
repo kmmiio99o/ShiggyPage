@@ -1,0 +1,83 @@
+{
+  "rootedAndroid": {
+    "features": [
+      "Injection into official Discord",
+      "Enhanced experience",
+      "Application-level modifications"
+    ],
+    "requirements": [
+      "Rooted device",
+      "Xposed Framework (Magisk, KernelSU, etc.)"
+    ],
+    "downloadUrl": "https://github.com/kmmiio99o/ShiggyXposed/releases/latest",
+    "ui": {
+      "platform_title": "Rooted Android",
+      "platform_subtitle": "System-level integration",
+      "warning_text": "ROOT REQUIRED: For advanced users only.",
+      "list_header": "Requirements & Details",
+      "button_text": "Get Shiggy Xposed"
+    }
+  },
+  "nonRootedAndroid": {
+    "description": "Perfect for standard devices. Our manager app handles the patching and installation for you automatically.",
+    "items": ["No root access required", "Easy installation process"],
+    "downloadUrl": "https://github.com/kmmiio99o/ShiggyManager/releases/latest",
+    "ui": {
+      "recommendation_label": "Recommended for your device",
+      "platform_title": "Non-rooted Android",
+      "platform_subtitle": "The easiest way to get started",
+      "list_header": "Features",
+      "button_text": "Get Shiggy Manager"
+    }
+  },
+  "ios": {
+    "bundleUrl": "https://github.com/kmmiio99o/ShiggyCord/releases/latest/download/shiggycord.js",
+    "kettuUrl": "https://github.com/C0C0B01/KettuTweak",
+    "btLoaderUrl": "https://github.com/CloudySn0w/BTLoader",
+    "guideSteps": [
+      "**Copy** the Bundle URL from this page.",
+      "Open your Discord client (KettuTweak or BTLoader).",
+      "Navigate to **Settings** and find the **Kettu** section.",
+      "Open it and Enable **Developer Settings**.",
+      "Go back to Discord settings and Open **Developer** page.",
+      "Enable **Load from custom URL** and paste there ShiggyCord URL."
+    ],
+    "ui": {
+      "recommendation_label": "Recommended for your device",
+      "platform_title": "iOS",
+      "platform_subtitle": "Manual remote injection",
+      "bundle_url_label": "Bundle URL",
+      "alert_title": "Note on Tweaks",
+      "alert_body": "By default, these clients inject <strong>Kettu</strong>. You must manually replace the URL in the app settings with the ShiggyCord link above.",
+      "guide_button": "How to inject ShiggyCord?",
+      "get_kettu": "Get KettuTweak",
+      "get_btloader": "Get BTLoader",
+      "dialog_title": "Injection Guide",
+      "dialog_close": "Got it"
+    }
+  },
+  "pcSection": {
+    "clients": [
+      { "name": "Vencord", "url": "https://vencord.dev" },
+      { "name": "Equicord", "url": "https://equicord.org" },
+      { "name": "Shelter", "url": "https://shelter.uwu.network/" },
+      { "name": "Replugged", "url": "https://replugged.dev/" },
+      { "name": "Moonlight", "url": "https://moonlight-mod.github.io/" }
+    ],
+    "apps": [
+      { "name": "Dorion", "url": "https://github.com/SpikeHD/Dorion" },
+      { "name": "GoofCord", "url": "https://github.com/Milkshiift/GoofCord" },
+      { "name": "Vesktop", "url": "https://vesktop.dev" },
+      { "name": "Equibop", "url": "https://equibop.org" }
+    ],
+    "ui": {
+      "recommendation_label": "Recommended for your device",
+      "client_mods_title": "Client Mods",
+      "windows_recommendation": "Recommended for Windows",
+      "client_mods_subtitle": "Injects directly into the official Discord client",
+      "standalone_apps_title": "Standalone Apps",
+      "os_recommendation": "Recommended for your OS",
+      "standalone_apps_subtitle": "Independent clients with built-in privacy and features"
+    }
+  }
+}

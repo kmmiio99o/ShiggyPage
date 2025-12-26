@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "branding": {
+      "logo_url": "https://cdn.kmmiio99o.dev/shiggycord/l4exhy.gif",
+      "title": "ShiggyCord",
+      "description_main": "The fast bundle based on ",
+      "description_highlight": "Kettu",
+      "description_suffix": ". Optimized for low-end devices, built for the community."
+    },
+    "buttons": {
+      "get_started": {
+        "text": "Get Started",
+        "path": "/install"
+      },
+      "discord": {
+        "text": "Join Discord",
+        "url": "https://discord.gg/nQykFF9Ud6"
+      }
+    }
+  },
+  "showcase": {
+    "cards": [
+      {
+        "id": "performance",
+        "title": "Optimized Performance",
+        "url": "https://cdn.kmmiio99o.dev/shiggycord/ss-list.jpg"
+      },
+      {
+        "id": "category",
+        "title": "Own Category",
+        "url": "https://cdn.kmmiio99o.dev/shiggycord/sh-category.jpg"
+      },
+      {
+        "id": "settings",
+        "title": "Settings Page",
+        "url": "https://cdn.kmmiio99o.dev/shiggycord/sh-settings.jpg"
+      }
+    ]
+  }
+}

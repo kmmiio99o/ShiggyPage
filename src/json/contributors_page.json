@@ -1,0 +1,81 @@
+{
+  "page_header": {
+    "title": "Contributors",
+    "description": "Recognizing the developers who make ShiggyCord and its underlying technologies possible."
+  },
+  "sections": {
+    "core": {
+      "title": "Core Maintainers"
+    },
+    "ecosystem": {
+      "title": "Ecosystem & Upstream",
+      "description": "Developers of projects that ShiggyCord relies on or integrates with."
+    }
+  },
+  "cta": {
+    "title": "Join the Community",
+    "description": "Whether it's a bug fix, a new feature, or improving documentation, every contribution helps make ShiggyCord better for everyone.",
+    "button_text": "Start Contributing",
+    "repo_url": "https://github.com/kmmiio99o/ShiggyCord"
+  },
+  "coreTeam": [
+    {
+      "name": "kmmiio99o.dev",
+      "role": "Project Lead",
+      "github": "https://github.com/kmmiio99o",
+      "avatar": "https://avatars.githubusercontent.com/u/164557248?v=4",
+      "description": "Main maintainer of ShiggyCord, ShiggyManager, and site infrastructure.",
+      "color": "#7289da"
+    }
+  ],
+  "ecosystemDevs": [
+    {
+      "name": "JonatanKTK_",
+      "role": "Providor of the domain",
+      "github": "https://github.com/jonatanktk",
+      "avatar": "https://avatars.githubusercontent.com/u/162631015?v=4",
+      "description": "Providor of kmmiio99o.dev domain, really nice.",
+      "color": "#ffeac3"
+    },
+    {
+      "name": "cocobo1",
+      "role": "Kettu Lead",
+      "github": "https://codeberg.org/cocobo1",
+      "avatar": "https://codeberg.org/avatars/1da9dd14678eb2b6b45ec37fec1e68b74da49348cacd9a798154eed2a6e834ac",
+      "description": "Developer of the Kettu foundation which serves as the backbone of this project.",
+      "color": "#828e96"
+    },
+    {
+      "name": "Revenge Team",
+      "role": "Original Xposed Creator",
+      "github": "https://github.com/revenge-mod",
+      "avatar": "https://avatars.githubusercontent.com/u/159218871?v=4",
+      "description": "Team on which Xposed ShiggyXposed is based.",
+      "color": "#ff4757"
+    },
+    {
+      "name": "Pylix",
+      "role": "Creator of Bunny Client",
+      "github": "https://github.com/amsryq",
+      "avatar": "https://avatars.githubusercontent.com/u/82711525?v=4",
+      "description": "Official creator of Bunny Discord mod.",
+      "color": "#3a3a77"
+    },
+    {
+      "name": "Vendetta Team",
+      "role": "Creators of Vendetta",
+      "github": "https://github.com/vendetta-mod",
+      "avatar": "https://avatars.githubusercontent.com/u/112445065?v=4",
+      "description": "Creators of the original Vendetta mobile Discord client.",
+      "color": "#00b9b9"
+    },
+    {
+      "name": "Aliucord",
+      "role": "Creators of Aliucord Manager",
+      "github": "https://github.com/Aliucord",
+      "avatar": "https://avatars.githubusercontent.com/u/78881422?v=4",
+      "description": "Creators of official Aliucord Manager (under Shiggy known as Shiggy Manager).",
+      "color": "#00c853"
+    }
+  ]
+}

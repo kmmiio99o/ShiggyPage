@@ -1,0 +1,65 @@
+{
+  "header": {
+    "title": "FAQ",
+    "subtitle": "Common questions about ShiggyCord"
+  },
+  "sections": {
+    "installation": {
+      "title": "Installation & Compatibility",
+      "questions": {
+        "install": {
+          "question": "How do I install ShiggyCord?",
+          "intro": "The method depends on your device:",
+          "non_rooted_label": "Non-Rooted Android:",
+          "non_rooted_text": "Use ",
+          "non_rooted_link_text": "Shiggy Manager",
+          "non_rooted_url": "https://github.com/kmmiio99o/ShiggyManager",
+          "non_rooted_suffix": ", designed for easy installation.",
+          "rooted_label": "Rooted Android:",
+          "rooted_text": "Use ",
+          "rooted_link_text": "ShiggyXposed",
+          "rooted_url": "https://github.com/kmmiio99o/ShiggyXposed",
+          "rooted_suffix": " to inject into Discord.",
+          "ios_note": "Note: We do not provide support for iOS due to lack of maintainers.",
+          "xposed_url": "https://github.com/kmmiio99o/ShiggyXposed",
+          "manager_url": "https://github.com/kmmiio99o/ShiggyManager"
+        },
+        "version": {
+          "question": "Can ShiggyCord run on Android 8.1 and below?",
+          "answer": "No. For non-rooted users, it's not possible. For rooted users, finding a compatible LSPosed fork for older versions is difficult, and we won't be forking it for this purpose."
+        },
+        "rooting": {
+          "question": "Do you provide support for rooting my device?",
+          "answer_prefix": "No. Rooting is complex and device-specific. We recommend checking ",
+          "link_label": "XDA Developers",
+          "link_url": "https://xdaforums.com/t/guide-2025-how-to-root-a-phone-a-complete-truthful-up-to-date-crap-free-and-no-bs-guide.4710038/",
+          "answer_suffix": " for a guide specific to your model."
+        }
+      }
+    },
+    "about": {
+      "title": "About ShiggyCord",
+      "questions": [
+        {
+          "question": "What is the difference between ShiggyCord and others?",
+          "answer": "ShiggyCord focuses on a refreshed, user-friendly settings interface and utilizes 'Core Plugins' for a more integrated experience."
+        },
+        {
+          "question": "Is ShiggyCord affiliated with Kettu?",
+          "answer": "It's a fork that has evolved into its own independent project. It started as an unofficial build but is now separate."
+        }
+      ]
+    },
+    "legal": {
+      "title": "Legal & Safety",
+      "question": "Is this against Discord's Terms of Service?",
+      "answer": "Yes. Like any third-party modification, it violates Discord's ToS. Use it at your own risk. While there are no known bans for client mods alone, safety is never 100% guaranteed."
+    },
+    "other": {
+      "title": "Other",
+      "question": "Do you recommend RPC apps like Kizzy or Metrolist?",
+      "answer_body": "No. These are considered self-bots and can lead to account disables. We recommend using Pano Scrobbler with the Multi Scrobbler plugin for the safest experience.",
+      "note": "Note: Metrolist only supports YouTube Music. For Tidal, Apple Music, etc., use Pano Scrobbler."
+    }
+  }
+}

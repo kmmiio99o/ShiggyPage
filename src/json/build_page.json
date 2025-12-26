@@ -1,0 +1,28 @@
+{
+  "page_title": "Build From Source",
+  "hero_section": {
+    "heading": "Build From Source",
+    "subheading": "Unleash the full potential of your Discord experience with a custom local build.",
+    "buttons": {
+      "get_started": "Get Started",
+      "download_prebuilt": "Download Prebuilt"
+    }
+  },
+  "sections": {
+    "prerequisites": "Prerequisites",
+    "build_steps": "Build Steps",
+    "local_development": "Local Development"
+  },
+  "resources_support": {
+    "heading": "Resources & Support",
+    "buttons": {
+      "join_discord": "Join Discord",
+      "report_issue": "Report an Issue"
+    }
+  },
+  "external_links": {
+    "releases": "https://github.com/kmmiio99o/ShiggyCord/releases",
+    "discord_invite": "https://discord.gg/nQykFF9Ud6",
+    "github_issues": "https://github.com/kmmiio99o/ShiggyCord/issues"
+  }
+}
