@@ -2,7 +2,7 @@
   "page_title": "Build From Source",
   "hero_section": {
     "heading": "Build From Source",
-    "subheading": "Unleash the full potential of your Discord experience with a custom local build.",
+    "subheading": "Build your own bundle of ShiggyCord and host it locally.",
     "buttons": {
       "get_started": "Get Started",
       "download_prebuilt": "Download Prebuilt"

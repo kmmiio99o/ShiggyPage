@@ -14,7 +14,7 @@
     },
     {
       "title": "Developer Mode",
-      "sub": "Must be enabled in Discord Advanced settings",
+      "sub": "Must be enabled in client settings (if you use Kettu or Revenge)",
       "icon": "Settings",
       "important": true
     },
