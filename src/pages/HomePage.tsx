@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
   Container,
   Typography,
@@ -7,6 +7,8 @@ import {
   alpha,
   Stack,
   useTheme,
+  CircularProgress,
+  Fade,
 } from "@mui/material";
 import { Download, Security, Speed, Settings } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -19,7 +21,7 @@ const DiscordIcon = () => (
   </svg>
 );
 
-const ScreenshotCard = ({ url, title, icon: Icon, sx }: any) => {
+const ScreenshotCard = React.memo(({ url, title, icon: Icon, sx }: any) => {
   const theme = useTheme();
   return (
     <Box
@@ -101,11 +103,56 @@ const ScreenshotCard = ({ url, title, icon: Icon, sx }: any) => {
       </Box>
     </Box>
   );
-};
+});
+
+ScreenshotCard.displayName = "ScreenshotCard";
 
 export const HomePage: React.FC = () => {
   const theme = useTheme();
   const { hero, showcase } = homeData;
+
+  // State for logo loading
+  const [isLogoLoaded, setIsLogoLoaded] = useState(false);
+
+  // Memoized screenshot cards data
+  const screenshotCards = useMemo(
+    () => [
+      {
+        title: showcase.cards[0].title,
+        url: showcase.cards[0].url,
+        icon: Speed,
+        sx: {
+          transform: {
+            xs: "translateX(-45px) translateY(-30px) rotate(-12deg) scale(0.9)",
+            md: "translateX(-180px) translateY(-20px) rotate(-12deg)",
+          },
+          zIndex: 1,
+        },
+      },
+      {
+        title: showcase.cards[1].title,
+        url: showcase.cards[1].url,
+        icon: Settings,
+        sx: {
+          transform: {
+            xs: "translateX(45px) translateY(30px) rotate(12deg) scale(0.9)",
+            md: "translateX(180px) translateY(20px) rotate(12deg)",
+          },
+          zIndex: 2,
+        },
+      },
+      {
+        title: showcase.cards[2].title,
+        url: showcase.cards[2].url,
+        icon: Security,
+        sx: {
+          zIndex: 3,
+          transform: { xs: "scale(1.1)", md: "scale(1.25)" },
+        },
+      },
+    ],
+    [showcase.cards],
+  );
 
   return (
     <Layout hasHero>
@@ -121,18 +168,59 @@ export const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 mb: 6,
+                position: "relative",
               }}
             >
-              <Box
-                component="img"
-                src={hero.branding.logo_url}
-                alt={`${hero.branding.title} Large Logo`}
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
+              {/* Logo Loading Animation */}
+              {!isLogoLoaded && (
+                <Fade in={!isLogoLoaded} timeout={500}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: alpha(theme.palette.background.paper, 0.7),
+                      borderRadius: "50%",
+                      zIndex: 1,
+                    }}
+                  >
+                    <CircularProgress
+                      size={60}
+                      thickness={4}
+                      sx={{
+                        color: theme.palette.primary.main,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                        "@keyframes pulse": {
+                          "0%, 100%": { opacity: 1 },
+                          "50%": { opacity: 0.5 },
+                        },
+                      }}
+                    />
+                  </Box>
+                </Fade>
+              )}
+
+              {/* Logo Image with Fade-in Animation */}
+              <Fade in={isLogoLoaded} timeout={800}>
+                <Box
+                  component="img"
+                  src={hero.branding.logo_url}
+                  alt={`${hero.branding.title} Large Logo`}
+                  onLoad={() => setIsLogoLoaded(true)}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    transition: "opacity 0.5s ease",
+                    opacity: isLogoLoaded ? 1 : 0,
+                  }}
+                />
+              </Fade>
             </Box>
 
             <Typography
@@ -233,41 +321,15 @@ export const HomePage: React.FC = () => {
               "& > *": { gridArea: "1 / 1 / 2 / 2" },
             }}
           >
-            <ScreenshotCard
-              title={showcase.cards[0].title}
-              url={showcase.cards[0].url}
-              icon={Speed}
-              sx={{
-                transform: {
-                  xs: "translateX(-45px) translateY(-30px) rotate(-12deg) scale(0.9)",
-                  md: "translateX(-180px) translateY(-20px) rotate(-12deg)",
-                },
-                zIndex: 1,
-              }}
-            />
-
-            <ScreenshotCard
-              title={showcase.cards[1].title}
-              url={showcase.cards[1].url}
-              icon={Settings}
-              sx={{
-                transform: {
-                  xs: "translateX(45px) translateY(30px) rotate(12deg) scale(0.9)",
-                  md: "translateX(180px) translateY(20px) rotate(12deg)",
-                },
-                zIndex: 2,
-              }}
-            />
-
-            <ScreenshotCard
-              title={showcase.cards[2].title}
-              url={showcase.cards[2].url}
-              icon={Security}
-              sx={{
-                zIndex: 3,
-                transform: { xs: "scale(1.1)", md: "scale(1.25)" },
-              }}
-            />
+            {screenshotCards.map((card, index) => (
+              <ScreenshotCard
+                key={index}
+                title={card.title}
+                url={card.url}
+                icon={card.icon}
+                sx={card.sx}
+              />
+            ))}
           </Box>
         </Container>
       </Box>

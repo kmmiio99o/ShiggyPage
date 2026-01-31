@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import {
   Drawer,
   List,
@@ -38,19 +38,75 @@ interface MobileNavProps {
   activePath: string;
 }
 
-export const MobileNav: React.FC<MobileNavProps> = ({
-  open,
-  onClose,
-  activePath,
-}) => {
-  const theme = useTheme();
+const NavListItem = React.memo(
+  ({
+    link,
+    index,
+    open,
+    activePath,
+    onClose,
+  }: {
+    link: any;
+    index: number;
+    open: boolean;
+    activePath: string;
+    onClose: () => void;
+  }) => {
+    const isActive = activePath === link.href;
 
-  return (
-    <Drawer
-      anchor="top"
-      open={open}
-      onClose={onClose}
-      PaperProps={{
+    const listItemStyle = useMemo(
+      () => ({
+        animation: open
+          ? `dropIn 0.4s ease-out forwards ${index * 0.05}s`
+          : "none",
+        opacity: 0,
+        transform: "translateY(-10px)",
+        "@keyframes dropIn": {
+          to: { opacity: 1, transform: "translateY(0)" },
+        },
+      }),
+      [open, index],
+    );
+
+    const handleClick = useCallback(() => {
+      onClose();
+    }, [onClose]);
+
+    return (
+      <ListItem key={link.href} disablePadding sx={listItemStyle}>
+        <ListItemButton
+          component={Link}
+          to={link.href}
+          selected={isActive}
+          onClick={handleClick}
+          sx={{ borderRadius: "16px", mb: 0.5, mx: 1, py: 1.8 }}
+        >
+          <ListItemIcon sx={{ minWidth: 44 }}>
+            {iconMap[link.text] || <Home />}
+          </ListItemIcon>
+          <ListItemText
+            primary={link.text}
+            slotProps={{
+              primary: {
+                fontWeight: isActive ? 800 : 600,
+              }
+            }}
+          />
+        </ListItemButton>
+      </ListItem>
+    );
+  },
+);
+
+NavListItem.displayName = "NavListItem";
+
+export const MobileNav: React.FC<MobileNavProps> = React.memo(
+  ({ open, onClose, activePath }) => {
+    const theme = useTheme();
+
+    // Memoized Drawer PaperProps style
+    const drawerPaperProps = useMemo(
+      () => ({
         sx: {
           width: "100%",
           backgroundColor: alpha(theme.palette.background.paper, 0.95),
@@ -59,55 +115,55 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           pt: 10,
           pb: 4,
         },
-      }}
-    >
-      <Box sx={{ px: 2 }}>
-        <Typography
-          variant="overline"
-          sx={{ px: 2, fontWeight: 800, color: "primary.main", opacity: 0.6 }}
-        >
-          Navigation
-        </Typography>
-        <List sx={{ mt: 1 }}>
-          {content.navigation.map((link, index) => (
-            <ListItem
-              key={link.href}
-              disablePadding
-              sx={{
-                animation: open
-                  ? `dropIn 0.4s ease-out forwards ${index * 0.05}s`
-                  : "none",
-                opacity: 0,
-                transform: "translateY(-10px)",
-                "@keyframes dropIn": {
-                  to: { opacity: 1, transform: "translateY(0)" },
-                },
-              }}
-            >
-              <ListItemButton
-                component={Link}
-                to={link.href}
-                selected={activePath === link.href}
-                onClick={onClose}
-                sx={{ borderRadius: "16px", mb: 0.5, mx: 1, py: 1.8 }}
-              >
-                <ListItemIcon sx={{ minWidth: 44 }}>
-                  {iconMap[link.text] || <Home />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={link.text}
-                  primaryTypographyProps={{
-                    fontWeight: activePath === link.href ? 800 : 600,
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
+      }),
+      [theme],
+    );
 
-      <Box sx={{ px: 4, mt: 2 }}>
-        <Divider sx={{ mb: 3, opacity: 0.5 }} />
+    const navigationItems = useMemo(
+      () =>
+        content.navigation.map((link, index) => (
+          <NavListItem
+            key={link.href}
+            link={link}
+            index={index}
+            open={open}
+            activePath={activePath}
+            onClose={onClose}
+          />
+        )),
+      [content.navigation, open, activePath, onClose],
+    );
+
+    const githubButtonStyle = useMemo(
+      () => ({
+        py: 1.8,
+        borderRadius: "100px",
+        textTransform: "none" as const,
+        fontWeight: 700,
+      }),
+      [],
+    );
+
+    const headerStyle = useMemo(
+      () => ({
+        px: 2,
+        fontWeight: 800,
+        color: "primary.main",
+        opacity: 0.6,
+      }),
+      [],
+    );
+
+    const dividerStyle = useMemo(
+      () => ({
+        mb: 3,
+        opacity: 0.5,
+      }),
+      [],
+    );
+
+    const githubButton = useMemo(
+      () => (
         <Button
           component="a"
           href={content.links.github_project}
@@ -116,16 +172,45 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           fullWidth
           disableElevation
           startIcon={<GitHub />}
-          sx={{
-            py: 1.8,
-            borderRadius: "100px",
-            textTransform: "none",
-            fontWeight: 700,
-          }}
+          sx={githubButtonStyle}
         >
           {content.brand.github_tooltip_text}
         </Button>
-      </Box>
-    </Drawer>
-  );
-};
+      ),
+      [
+        content.links.github_project,
+        content.brand.github_tooltip_text,
+        githubButtonStyle,
+      ],
+    );
+
+    const handleClose = useCallback(() => {
+      onClose();
+    }, [onClose]);
+
+    return (
+      <Drawer
+        anchor="top"
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          paper: drawerPaperProps
+        }}
+      >
+        <Box sx={{ px: 2 }}>
+          <Typography variant="overline" sx={headerStyle}>
+            Navigation
+          </Typography>
+          <List sx={{ mt: 1 }}>{navigationItems}</List>
+        </Box>
+
+        <Box sx={{ px: 4, mt: 2 }}>
+          <Divider sx={dividerStyle} />
+          {githubButton}
+        </Box>
+      </Drawer>
+    );
+  },
+);
+
+MobileNav.displayName = "MobileNav";

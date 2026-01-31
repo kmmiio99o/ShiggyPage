@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   AppBar,
   Toolbar,
@@ -21,117 +21,166 @@ export const Header: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const toggleMobileNav = () => setMobileOpen((prev) => !prev);
+  const toggleMobileNav = useCallback(() => {
+    setMobileOpen((prev) => !prev);
+  }, []);
+
+  const appBarStyle = useMemo(
+    () => ({
+      backgroundColor: "transparent",
+      backgroundImage: "none",
+      top: isMobile ? 0 : 16,
+      zIndex: theme.zIndex.drawer + 2,
+    }),
+    [isMobile, theme.zIndex.drawer],
+  );
+
+  const toolbarStyle = useMemo(
+    () => ({
+      minHeight: 64,
+      px: { xs: 2, sm: 3 },
+      backgroundColor: alpha(theme.palette.background.paper, 0.8),
+      backdropFilter: "blur(20px)",
+      WebkitBackdropFilter: "blur(20px)",
+      borderRadius: isMobile ? "0 0 24px 24px" : "24px",
+      border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+      boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.05)}`,
+    }),
+    [isMobile, theme],
+  );
+
+  const logoBoxStyle = useMemo(
+    () => ({
+      width: 40,
+      height: 40,
+      borderRadius: "12px",
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: alpha(theme.palette.primary.main, 0.1),
+      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+    }),
+    [theme],
+  );
+
+  const logoImageStyle = useMemo(
+    () => ({
+      width: "85%",
+      height: "85%",
+      objectFit: "contain",
+    }),
+    [],
+  );
+
+  const brandNameStyle = useMemo(
+    () => ({
+      fontWeight: 800,
+      fontSize: "1.1rem",
+      color: theme.palette.text.primary,
+      letterSpacing: "-0.03em",
+    }),
+    [theme.palette.text.primary],
+  );
+
+  const hamburgerIconButtonStyle = useMemo(
+    () => ({
+      width: 44,
+      height: 44,
+      color: theme.palette.text.primary,
+      bgcolor: alpha(theme.palette.primary.main, 0.05),
+      position: "relative",
+    }),
+    [theme],
+  );
+
+  const hamburgerAnimationStates = useMemo(() => {
+    const baseStyle = {
+      width: 20,
+      height: 14,
+      display: "flex",
+      flexDirection: "column" as const,
+      justifyContent: "space-between",
+      "& span": {
+        display: "block",
+        width: "100%",
+        height: "2px",
+        bgcolor: "currentColor",
+        borderRadius: "2px",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transformOrigin: "center",
+      },
+    };
+
+    if (mobileOpen) {
+      return {
+        ...baseStyle,
+        "& span:nth-of-type(1)": {
+          transform: "translateY(6px) rotate(45deg)",
+        },
+        "& span:nth-of-type(2)": {
+          opacity: 0,
+          transform: "scale(0)",
+        },
+        "& span:nth-of-type(3)": {
+          transform: "translateY(-6px) rotate(-45deg)",
+        },
+      };
+    }
+
+    return baseStyle;
+  }, [mobileOpen]);
+
+  const desktopNavComponent = useMemo(() => {
+    if (!isMobile) {
+      return <DesktopNav activePath={activePath} />;
+    }
+    return null;
+  }, [isMobile, activePath]);
+
+  const mobileNavComponent = useMemo(() => {
+    if (isMobile) {
+      return (
+        <MobileNav
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          activePath={activePath}
+        />
+      );
+    }
+    return null;
+  }, [isMobile, mobileOpen, activePath]);
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        elevation={0}
-        sx={{
-          backgroundColor: "transparent",
-          backgroundImage: "none",
-          top: isMobile ? 0 : 16,
-          zIndex: theme.zIndex.drawer + 2,
-        }}
-      >
+      <AppBar position="fixed" elevation={0} sx={appBarStyle}>
         <Container maxWidth="lg">
-          <Toolbar
-            sx={{
-              minHeight: 64,
-              px: { xs: 2, sm: 3 },
-              backgroundColor: alpha(theme.palette.background.paper, 0.8),
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderRadius: isMobile ? "0 0 24px 24px" : "24px",
-              border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-              boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.05)}`,
-            }}
-          >
+          <Toolbar sx={toolbarStyle}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: alpha(theme.palette.primary.main, 0.1),
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                }}
-              >
+              <Box sx={logoBoxStyle}>
                 <Box
                   component="img"
                   src={content.brand.logoUrl}
                   alt={`${content.brand.name} Logo`}
-                  sx={{
-                    width: "85%",
-                    height: "85%",
-                    objectFit: "contain",
-                  }}
+                  sx={logoImageStyle}
                 />
               </Box>
 
-              <Box
-                component="span"
-                sx={{
-                  fontWeight: 800,
-                  fontSize: "1.1rem",
-                  color: theme.palette.text.primary,
-                  letterSpacing: "-0.03em",
-                }}
-              >
+              <Box component="span" sx={brandNameStyle}>
                 {content.brand.name}
               </Box>
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
 
-            {!isMobile && <DesktopNav activePath={activePath} />}
+            {desktopNavComponent}
 
             {isMobile && (
               <IconButton
                 onClick={toggleMobileNav}
-                sx={{
-                  width: 44,
-                  height: 44,
-                  color: theme.palette.text.primary,
-                  bgcolor: alpha(theme.palette.primary.main, 0.05),
-                  position: "relative",
-                }}
+                sx={hamburgerIconButtonStyle}
               >
-                <Box
-                  sx={{
-                    width: 20,
-                    height: 14,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    "& span": {
-                      display: "block",
-                      width: "100%",
-                      height: "2px",
-                      bgcolor: "currentColor",
-                      borderRadius: "2px",
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      transformOrigin: "center",
-                    },
-                    ...(mobileOpen && {
-                      "& span:nth-of-type(1)": {
-                        transform: "translateY(6px) rotate(45deg)",
-                      },
-                      "& span:nth-of-type(2)": {
-                        opacity: 0,
-                        transform: "scale(0)",
-                      },
-                      "& span:nth-of-type(3)": {
-                        transform: "translateY(-6px) rotate(-45deg)",
-                      },
-                    }),
-                  }}
-                >
+                <Box sx={hamburgerAnimationStates}>
                   <span />
                   <span />
                   <span />
@@ -142,13 +191,7 @@ export const Header: React.FC = () => {
         </Container>
       </AppBar>
 
-      {isMobile && (
-        <MobileNav
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-          activePath={activePath}
-        />
-      )}
+      {mobileNavComponent}
     </>
   );
 };

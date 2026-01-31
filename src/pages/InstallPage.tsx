@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -29,13 +29,19 @@ export const InstallPage: React.FC = () => {
   const [recommendation, setRecommendation] = useState<string | null>(null);
   const theme = useTheme();
 
-  useEffect(() => {
+  const deviceDetection = useMemo(() => {
     const userAgent = navigator.userAgent || (window as any).opera;
 
     const isIOS =
       /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
     const isAndroid = /android/i.test(userAgent);
     const isPC = /Win|Mac|Linux/i.test(userAgent) && !isAndroid && !isIOS;
+
+    return { isIOS, isAndroid, isPC };
+  }, []);
+
+  useEffect(() => {
+    const { isIOS, isAndroid, isPC } = deviceDetection;
 
     if (isIOS) {
       setActiveTab(2);
@@ -47,54 +53,114 @@ export const InstallPage: React.FC = () => {
       setActiveTab(3);
       setRecommendation(installData.tabs.pc.type);
     }
-  }, []);
+  }, [deviceDetection]);
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
+  const handleTabChange = useCallback(
+    (_: React.SyntheticEvent, newValue: number) => {
+      setActiveTab(newValue);
+    },
+    [],
+  );
 
-  const getTabLabel = (label: string, type: string) => {
-    const isRec = recommendation === type;
-    return (
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        spacing={0}
-        sx={{
-          width: "100%",
-          minWidth: 0,
-          px: 0.5,
-        }}
-      >
-        <Typography
-          variant="body2"
+  const getTabLabel = useCallback(
+    (label: string, type: string) => {
+      const isRec = recommendation === type;
+      return (
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          spacing={0}
           sx={{
-            fontWeight: 700,
-            textTransform: "none",
-            whiteSpace: "nowrap",
-            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+            width: "100%",
+            minWidth: 0,
+            px: 0.5,
           }}
         >
-          {label}
-        </Typography>
-        {isRec && (
           <Typography
-            variant="caption"
+            variant="body2"
             sx={{
-              fontSize: "0.6rem",
-              fontWeight: 900,
-              color: "primary.main",
-              lineHeight: 1,
-              mt: 0.2,
-              letterSpacing: 0.5,
+              fontWeight: 700,
+              textTransform: "none",
+              whiteSpace: "nowrap",
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
             }}
           >
-            {installData.labels.recommended_badge}
+            {label}
           </Typography>
-        )}
-      </Stack>
-    );
-  };
+          {isRec && (
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: "0.6rem",
+                fontWeight: 900,
+                color: "primary.main",
+                lineHeight: 1,
+                mt: 0.2,
+                letterSpacing: 0.5,
+              }}
+            >
+              {installData.labels.recommended_badge}
+            </Typography>
+          )}
+        </Stack>
+      );
+    },
+    [recommendation],
+  );
+
+  const tabsConfig = useMemo(
+    () => [
+      {
+        icon: <PhoneAndroid sx={{ fontSize: { xs: 20, sm: 24 } }} />,
+        label: installData.tabs.non_root.label,
+        type: installData.tabs.non_root.type,
+      },
+      {
+        icon: <Terminal sx={{ fontSize: { xs: 20, sm: 24 } }} />,
+        label: installData.tabs.root.label,
+        type: installData.tabs.root.type,
+      },
+      {
+        icon: <Apple sx={{ fontSize: { xs: 20, sm: 24 } }} />,
+        label: installData.tabs.ios.label,
+        type: installData.tabs.ios.type,
+      },
+      {
+        icon: <Laptop sx={{ fontSize: { xs: 20, sm: 24 } }} />,
+        label: installData.tabs.pc.label,
+        type: installData.tabs.pc.type,
+        hidden: { xs: true, md: false },
+      },
+    ],
+    [],
+  );
+
+  const activeTabContent = useMemo(() => {
+    switch (activeTab) {
+      case 0:
+        return (
+          <NonRootedAndroid
+            isRecommended={recommendation === installData.tabs.non_root.type}
+          />
+        );
+      case 1:
+        return <RootedAndroid />;
+      case 2:
+        return (
+          <BundleInjection
+            isRecommended={recommendation === installData.tabs.ios.type}
+          />
+        );
+      case 3:
+        return (
+          <PCSection
+            isRecommended={recommendation === installData.tabs.pc.type}
+          />
+        );
+      default:
+        return null;
+    }
+  }, [activeTab, recommendation]);
 
   return (
     <Layout>
@@ -161,46 +227,19 @@ export const InstallPage: React.FC = () => {
                 },
               }}
             >
-              <Tab
-                icon={<PhoneAndroid sx={{ fontSize: { xs: 20, sm: 24 } }} />}
-                iconPosition="start"
-                label={getTabLabel(
-                  installData.tabs.non_root.label,
-                  installData.tabs.non_root.type,
-                )}
-                sx={{ borderRadius: "100px", minHeight: 64 }}
-              />
-              <Tab
-                icon={<Terminal sx={{ fontSize: { xs: 20, sm: 24 } }} />}
-                iconPosition="start"
-                label={getTabLabel(
-                  installData.tabs.root.label,
-                  installData.tabs.root.type,
-                )}
-                sx={{ borderRadius: "100px", minHeight: 64 }}
-              />
-              <Tab
-                icon={<Apple sx={{ fontSize: { xs: 20, sm: 24 } }} />}
-                iconPosition="start"
-                label={getTabLabel(
-                  installData.tabs.ios.label,
-                  installData.tabs.ios.type,
-                )}
-                sx={{ borderRadius: "100px", minHeight: 64 }}
-              />
-              <Tab
-                icon={<Laptop />}
-                iconPosition="start"
-                label={getTabLabel(
-                  installData.tabs.pc.label,
-                  installData.tabs.pc.type,
-                )}
-                sx={{
-                  borderRadius: "100px",
-                  minHeight: 64,
-                  display: { xs: "none", md: "inline-flex" },
-                }}
-              />
+              {tabsConfig.map((tab, index) => (
+                <Tab
+                  key={index}
+                  icon={tab.icon}
+                  iconPosition="start"
+                  label={getTabLabel(tab.label, tab.type)}
+                  sx={{
+                    borderRadius: "100px",
+                    minHeight: 64,
+                    ...tab.hidden,
+                  }}
+                />
+              ))}
             </Tabs>
           </Paper>
 
@@ -215,24 +254,7 @@ export const InstallPage: React.FC = () => {
                 backdropFilter: "blur(8px)",
               }}
             >
-              {activeTab === 0 && (
-                <NonRootedAndroid
-                  isRecommended={
-                    recommendation === installData.tabs.non_root.type
-                  }
-                />
-              )}
-              {activeTab === 1 && <RootedAndroid />}
-              {activeTab === 2 && (
-                <BundleInjection
-                  isRecommended={recommendation === installData.tabs.ios.type}
-                />
-              )}
-              {activeTab === 3 && (
-                <PCSection
-                  isRecommended={recommendation === installData.tabs.pc.type}
-                />
-              )}
+              {activeTabContent}
             </Paper>
           </Box>
         </Container>

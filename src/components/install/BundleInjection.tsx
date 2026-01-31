@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   Typography,
   Button,
@@ -30,10 +30,18 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
   const [openHelp, setOpenHelp] = useState(false);
-  const color = theme.palette.primary.main;
-  const { bundleUrl, kettuUrl, btLoaderUrl, guideSteps, ui } = data.ios;
 
-  const handleCopy = async () => {
+  const color = useMemo(
+    () => theme.palette.primary.main,
+    [theme.palette.primary.main],
+  );
+
+  const { bundleUrl, kettuUrl, btLoaderUrl, guideSteps, ui } = useMemo(
+    () => data.ios,
+    [],
+  );
+
+  const handleCopy = useCallback(async () => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(bundleUrl);
@@ -47,11 +55,106 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
       }
 
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const timer = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timer);
     } catch (err) {
       console.error("Copy failed", err);
     }
-  };
+  }, [bundleUrl]);
+
+  const handleOpenHelp = useCallback(() => setOpenHelp(true), []);
+  const handleCloseHelp = useCallback(() => setOpenHelp(false), []);
+
+  const platformHeaderStyle = useMemo(
+    () => ({
+      p: 1.5,
+      borderRadius: "12px",
+      display: "flex",
+      bgcolor: alpha(color, 0.1),
+    }),
+    [color],
+  );
+
+  const urlBoxStyle = useMemo(
+    () => ({
+      position: "relative" as const,
+      p: 2,
+      mt: 1,
+      borderRadius: 3,
+      bgcolor: alpha(color, 0.05),
+      border: `1px solid ${alpha(color, 0.2)}`,
+      display: "flex",
+      alignItems: "center",
+    }),
+    [color],
+  );
+
+  const copyButtonStyle = useMemo(
+    () => ({
+      position: "absolute" as const,
+      right: 8,
+      bgcolor: copied
+        ? alpha(theme.palette.success.main, 0.1)
+        : alpha(color, 0.1),
+      borderRadius: "8px",
+    }),
+    [copied, color, theme.palette.success.main],
+  );
+
+  const formattedGuideSteps = useMemo(
+    () =>
+      guideSteps.map((step: string, i: number) => ({
+        id: i,
+        content: step.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"),
+      })),
+    [guideSteps],
+  );
+
+  const alertStyle = useMemo(
+    () => ({
+      mb: 3,
+      borderRadius: 2,
+      borderColor: alpha(color, 0.3),
+    }),
+    [color],
+  );
+
+  const guideButtonStyle = useMemo(
+    () => ({
+      bgcolor: alpha(color, 0.1),
+      color,
+      borderRadius: "50px",
+      py: 1.2,
+      textTransform: "none" as const,
+      fontWeight: 700,
+    }),
+    [color],
+  );
+
+  const kettuButtonStyle = useMemo(
+    () => ({
+      borderRadius: "50px",
+      py: 1.5,
+      textTransform: "none" as const,
+      fontWeight: 700,
+    }),
+    [],
+  );
+
+  const dialogPaperProps = useMemo(
+    () => ({
+      sx: { borderRadius: 4, p: 1 },
+    }),
+    [],
+  );
+
+  const dialogCloseButtonStyle = useMemo(
+    () => ({
+      borderRadius: "20px",
+      px: 4,
+    }),
+    [],
+  );
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -65,14 +168,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
       )}
 
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            p: 1.5,
-            borderRadius: "12px",
-            display: "flex",
-            bgcolor: alpha(color, 0.1),
-          }}
-        >
+        <Box sx={platformHeaderStyle}>
           <Apple sx={{ color, fontSize: 28 }} />
         </Box>
         <Box>
@@ -89,18 +185,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
         <Typography variant="overline" fontWeight={700} color="text.secondary">
           {ui.bundle_url_label}
         </Typography>
-        <Box
-          sx={{
-            position: "relative",
-            p: 2,
-            mt: 1,
-            borderRadius: 3,
-            bgcolor: alpha(color, 0.05),
-            border: `1px solid ${alpha(color, 0.2)}`,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        <Box sx={urlBoxStyle}>
           <Typography
             variant="body1"
             sx={{
@@ -112,18 +197,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
           >
             {bundleUrl}
           </Typography>
-          <IconButton
-            onClick={handleCopy}
-            size="small"
-            sx={{
-              position: "absolute",
-              right: 8,
-              bgcolor: copied
-                ? alpha(theme.palette.success.main, 0.1)
-                : alpha(color, 0.1),
-              borderRadius: "8px",
-            }}
-          >
+          <IconButton onClick={handleCopy} size="small" sx={copyButtonStyle}>
             {copied ? (
               <CheckCircle fontSize="small" color="success" />
             ) : (
@@ -133,11 +207,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
         </Box>
       </Box>
 
-      <Alert
-        severity="info"
-        variant="outlined"
-        sx={{ mb: 3, borderRadius: 2, borderColor: alpha(color, 0.3) }}
-      >
+      <Alert severity="info" variant="outlined" sx={alertStyle}>
         <AlertTitle sx={{ fontWeight: 700 }}>{ui.alert_title}</AlertTitle>
         <span dangerouslySetInnerHTML={{ __html: ui.alert_body }} />
       </Alert>
@@ -147,16 +217,9 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
           variant="contained"
           fullWidth
           disableElevation
-          onClick={() => setOpenHelp(true)}
+          onClick={handleOpenHelp}
           startIcon={<InfoOutlined />}
-          sx={{
-            bgcolor: alpha(color, 0.1),
-            color,
-            borderRadius: "50px",
-            py: 1.2,
-            textTransform: "none",
-            fontWeight: 700,
-          }}
+          sx={guideButtonStyle}
         >
           {ui.guide_button}
         </Button>
@@ -167,12 +230,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
           href={kettuUrl}
           target="_blank"
           endIcon={<ArrowForward />}
-          sx={{
-            borderRadius: "50px",
-            py: 1.5,
-            textTransform: "none",
-            fontWeight: 700,
-          }}
+          sx={kettuButtonStyle}
         >
           {ui.get_kettu}
         </Button>
@@ -181,12 +239,7 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
           fullWidth
           href={btLoaderUrl}
           target="_blank"
-          sx={{
-            borderRadius: "50px",
-            py: 1.5,
-            textTransform: "none",
-            fontWeight: 700,
-          }}
+          sx={kettuButtonStyle}
         >
           {ui.get_btloader}
         </Button>
@@ -194,21 +247,20 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
 
       <Dialog
         open={openHelp}
-        onClose={() => setOpenHelp(false)}
-        PaperProps={{ sx: { borderRadius: 4, p: 1 } }}
+        onClose={handleCloseHelp}
+        slotProps={{
+          paper: dialogPaperProps,
+        }}
       >
         <DialogTitle sx={{ fontWeight: 800 }}>{ui.dialog_title}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            {guideSteps.map((step, i) => (
-              <Typography key={i} variant="body2">
-                {i + 1}.{" "}
+            {formattedGuideSteps.map((step) => (
+              <Typography key={step.id} variant="body2">
+                {step.id + 1}.{" "}
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: step.replace(
-                      /\*\*(.*?)\*\*/g,
-                      "<strong>$1</strong>",
-                    ),
+                    __html: step.content,
                   }}
                 />
               </Typography>
@@ -217,10 +269,10 @@ export const BundleInjection: React.FC<{ isRecommended?: boolean }> = ({
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button
-            onClick={() => setOpenHelp(false)}
+            onClick={handleCloseHelp}
             variant="contained"
             disableElevation
-            sx={{ borderRadius: "20px", px: 4 }}
+            sx={dialogCloseButtonStyle}
           >
             {ui.dialog_close}
           </Button>

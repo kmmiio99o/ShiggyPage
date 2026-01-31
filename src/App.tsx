@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, Button, Box } from "@mui/material";
@@ -19,84 +19,150 @@ export const App: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [showSkip, setShowSkip] = useState(false);
 
-  useEffect(() => {
-    const criticalImages = [
-      "https://avatars.githubusercontent.com/u/164557248?v=4", //kmmiio99o
-      "https://codeberg.org/avatars/1da9dd14678eb2b6b45ec37fec1e68b74da49348cacd9a798154eed2a6e834ac", //cocobo1
-      "https://avatars.githubusercontent.com/u/159218871?v=4", //revenge-mod
-      "https://avatars.githubusercontent.com/u/82711525?v=4", //pylix
-      "https://avatars.githubusercontent.com/u/112445065?v=4", //vendetta-mod
-      "https://avatars.githubusercontent.com/u/78881422?v=4", //Aliucord
-      "https://avatars.githubusercontent.com/u/162631015?v=4", //Jonatanktk
+  const criticalImages = useMemo(
+    () => [
       "https://cdn.kmmiio99o.dev/shiggycord/xguhyl.png",
       "https://cdn.kmmiio99o.dev/shiggycord/c1hl8n.webp",
       "https://cdn.kmmiio99o.dev/shiggycord/ss-list.jpg",
       "https://cdn.kmmiio99o.dev/shiggycord/sh-category.jpg",
       "https://cdn.kmmiio99o.dev/shiggycord/sh-settings.jpg",
       "https://cdn.kmmiio99o.dev/shiggycord/l4exhy.gif",
-    ];
-    const skipTimer = setTimeout(() => setShowSkip(true), 3000);
+    ],
+    [],
+  );
+
+  const handleSkipLoading = useCallback(() => {
+    setLoading(false);
+  }, []);
+
+  const skipButtonStyle = useMemo(
+    () => ({
+      position: "fixed" as const,
+      bottom: 40,
+      left: "50%",
+      transform: "translateX(-50%)",
+      color: "text.secondary",
+      fontSize: "0.75rem",
+      textDecoration: "underline",
+      "&:hover": { textDecoration: "none", bgcolor: "transparent" },
+    }),
+    [],
+  );
+
+  const SkipButton = useMemo(
+    () =>
+      showSkip ? (
+        <Button variant="text" onClick={handleSkipLoading} sx={skipButtonStyle}>
+          Taking too long? Click here to continue
+        </Button>
+      ) : null,
+    [showSkip, handleSkipLoading, skipButtonStyle],
+  );
+
+  // Loading effect with optimized image loading
+  useEffect(() => {
+    let isMounted = true;
+    const skipTimer = setTimeout(() => {
+      if (isMounted) setShowSkip(true);
+    }, 3000);
+
     const forceLoadTimer = setTimeout(() => {
-      setLoading(false);
+      if (isMounted) setLoading(false);
     }, 10000);
 
     if (criticalImages.length === 0) {
-      setLoading(false);
-      return;
+      if (isMounted) setLoading(false);
+      return () => {
+        clearTimeout(skipTimer);
+        clearTimeout(forceLoadTimer);
+      };
     }
 
     let loadedCount = 0;
     const total = criticalImages.length;
+    const imagePromises: Promise<void>[] = [];
 
+    const handleImageComplete = () => {
+      if (!isMounted) return;
+      loadedCount++;
+      setProgress((loadedCount / total) * 100);
+      if (loadedCount === total) {
+        setTimeout(() => {
+          if (isMounted) setLoading(false);
+        }, 600);
+      }
+    };
+
+    // Create image loading promises
     criticalImages.forEach((url) => {
       const img = new Image();
       img.src = url;
 
-      const handleImageComplete = () => {
-        loadedCount++;
-        setProgress((loadedCount / total) * 100);
-        if (loadedCount === total) {
-          setTimeout(() => setLoading(false), 600);
-        }
-      };
+      const promise = new Promise<void>((resolve) => {
+        img.onload = () => {
+          handleImageComplete();
+          resolve();
+        };
+        img.onerror = () => {
+          handleImageComplete();
+          resolve();
+        };
+      });
 
-      img.onload = handleImageComplete;
-      img.onerror = handleImageComplete;
+      imagePromises.push(promise);
+    });
+
+    // Optional: Use Promise.all for better loading control
+    Promise.allSettled(imagePromises).then(() => {
+      if (isMounted && loadedCount === total) {
+        setTimeout(() => {
+          if (isMounted) setLoading(false);
+        }, 600);
+      }
     });
 
     return () => {
+      isMounted = false;
       clearTimeout(skipTimer);
       clearTimeout(forceLoadTimer);
     };
-  }, []);
+  }, [criticalImages]);
+
+  const appRoutes = useMemo(
+    () => (
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/install" element={<InstallPage />} />
+        <Route path="/build" element={<BuildPage />} />
+        <Route path="/contribute" element={<ContributePage />} />
+        <Route path="/FAQ" element={<FAQPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    ),
+    [],
+  );
+
+  const loadingContent = useMemo(
+    () => (
+      <Box sx={{ position: "relative" }}>
+        <LoadingPage progress={progress} />
+        {SkipButton}
+      </Box>
+    ),
+    [progress, SkipButton],
+  );
+
+  const mainAppContent = useMemo(
+    () => <Router>{appRoutes}</Router>,
+    [appRoutes],
+  );
 
   if (loading) {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {/* We wrap LoadingPage to position the skip button over it */}
-        <Box sx={{ position: "relative" }}>
-          <LoadingPage progress={progress} />
-
-          {showSkip && (
-            <Button
-              variant="text"
-              onClick={() => setLoading(false)}
-              sx={{
-                position: "fixed",
-                bottom: 40,
-                left: "50%",
-                transform: "translateX(-50%)",
-                color: "text.secondary",
-                fontSize: "0.75rem",
-                textDecoration: "underline",
-                "&:hover": { textDecoration: "none", bgcolor: "transparent" },
-              }}
-            >
-              Taking too long? Click here to continue
-            </Button>
-          )}
-        </Box>
+        {loadingContent}
       </ThemeProvider>
     );
   }
@@ -104,17 +170,7 @@ export const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/install" element={<InstallPage />} />
-          <Route path="/build" element={<BuildPage />} />
-          <Route path="/contribute" element={<ContributePage />} />
-          <Route path="/FAQ" element={<FAQPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
+      {mainAppContent}
     </ThemeProvider>
   );
 };

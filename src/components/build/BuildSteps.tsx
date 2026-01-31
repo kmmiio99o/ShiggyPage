@@ -28,10 +28,16 @@ export const BuildSteps: React.FC = () => {
       textArea.select();
 
       try {
-        const successful = document.execCommand("copy");
-        if (successful) setCopied(i);
+        await navigator.clipboard.writeText(textArea.value);
+        setCopied(i);
       } catch (err) {
-        console.error("Fallback copy failed", err);
+        console.error("Copy failed", err);
+        try {
+          const successful = document.execCommand("copy");
+          if (successful) setCopied(i);
+        } catch (fallbackErr) {
+          console.error("Fallback copy failed", fallbackErr);
+        }
       }
 
       document.body.removeChild(textArea);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Typography,
   Button,
@@ -19,23 +19,97 @@ import {
 } from "@mui/icons-material";
 import data from "../../json/install.json";
 
-export const RootedAndroid: React.FC = () => {
+export const RootedAndroid: React.FC = React.memo(() => {
   const theme = useTheme();
-  const color = theme.palette.primary.main;
-  const { features, requirements, downloadUrl, ui } = data.rootedAndroid;
+
+  const color = useMemo(
+    () => theme.palette.primary.main,
+    [theme.palette.primary.main],
+  );
+  const errorColor = useMemo(
+    () => theme.palette.error.main,
+    [theme.palette.error.main],
+  );
+
+  const { features, requirements, downloadUrl, ui } = useMemo(
+    () => data.rootedAndroid,
+    [],
+  );
+
+  const platformHeaderStyle = useMemo(
+    () => ({
+      p: 1.5,
+      borderRadius: "12px",
+      display: "flex",
+      bgcolor: alpha(color, 0.1),
+    }),
+    [color],
+  );
+
+  const warningBoxStyle = useMemo(
+    () => ({
+      p: 1.5,
+      mb: 2,
+      borderRadius: 3,
+      bgcolor: alpha(errorColor, 0.05),
+      border: `1px solid ${alpha(errorColor, 0.1)}`,
+      display: "flex",
+      alignItems: "center",
+      gap: 1.5,
+    }),
+    [errorColor],
+  );
+
+  const listContainerStyle = useMemo(
+    () => ({
+      p: 1.5,
+      borderRadius: 3,
+      bgcolor: alpha(color, 0.05),
+      border: `1px solid ${alpha(color, 0.1)}`,
+    }),
+    [color],
+  );
+
+  const listHeaderStyle = useMemo(
+    () => ({
+      ml: 1,
+    }),
+    [],
+  );
+
+  const buttonStyle = useMemo(
+    () => ({
+      borderRadius: "50px",
+      py: 1.5,
+      textTransform: "none" as const,
+      fontWeight: 700,
+    }),
+    [],
+  );
+
+  const combinedListItems = useMemo(() => {
+    const combined = [...features, ...requirements];
+    return combined.map((text, i) => (
+      <ListItem key={i} disableGutters sx={{ px: 1 }}>
+        <ListItemIcon sx={{ minWidth: 32 }}>
+          <CheckCircle sx={{ fontSize: 18, color }} />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {text}
+            </Typography>
+          }
+        />
+      </ListItem>
+    ));
+  }, [features, requirements, color]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            p: 1.5,
-            borderRadius: "12px",
-            display: "flex",
-            bgcolor: alpha(color, 0.1),
-          }}
-        >
-          <Terminal sx={{ color: color, fontSize: 28 }} />
+        <Box sx={platformHeaderStyle}>
+          <Terminal sx={{ color, fontSize: 28 }} />
         </Box>
         <Box>
           <Typography variant="h6" fontWeight={700}>
@@ -47,18 +121,7 @@ export const RootedAndroid: React.FC = () => {
         </Box>
       </Stack>
 
-      <Box
-        sx={{
-          p: 1.5,
-          mb: 2,
-          borderRadius: 3,
-          bgcolor: alpha(theme.palette.error.main, 0.05),
-          border: `1px solid ${alpha(theme.palette.error.main, 0.1)}`,
-          display: "flex",
-          alignItems: "center",
-          gap: 1.5,
-        }}
-      >
+      <Box sx={warningBoxStyle}>
         <Warning color="error" sx={{ fontSize: 20 }} />
         <Typography variant="caption" color="error.main" fontWeight={700}>
           {ui.warning_text}
@@ -70,33 +133,13 @@ export const RootedAndroid: React.FC = () => {
           variant="overline"
           fontWeight={700}
           color="text.secondary"
-          sx={{ ml: 1 }}
+          sx={listHeaderStyle}
         >
           {ui.list_header}
         </Typography>
-        <Box
-          sx={{
-            p: 1.5,
-            borderRadius: 3,
-            bgcolor: alpha(color, 0.05),
-            border: `1px solid ${alpha(color, 0.1)}`,
-          }}
-        >
+        <Box sx={listContainerStyle}>
           <List dense disablePadding>
-            {[...features, ...requirements].map((text, i) => (
-              <ListItem key={i} disableGutters sx={{ px: 1 }}>
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  <CheckCircle sx={{ fontSize: 18, color }} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {text}
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            ))}
+            {combinedListItems}
           </List>
         </Box>
       </Box>
@@ -108,15 +151,12 @@ export const RootedAndroid: React.FC = () => {
         href={downloadUrl}
         target="_blank"
         endIcon={<ArrowForward />}
-        sx={{
-          borderRadius: "50px",
-          py: 1.5,
-          textTransform: "none",
-          fontWeight: 700,
-        }}
+        sx={buttonStyle}
       >
         {ui.button_text}
       </Button>
     </Box>
   );
-};
+});
+
+RootedAndroid.displayName = "RootedAndroid";
